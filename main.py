@@ -4,6 +4,7 @@ from enum import Enum
 
 # Pydantic
 from pydantic import BaseModel, Field
+from pydantic import EmailStr, HttpUrl
 
 # FastAPI
 from fastapi import FastAPI, Body, Path, Query
@@ -27,8 +28,8 @@ class Person(BaseModel):
     is_married: Optional[bool] = Field(default=None)
 
 class Location(BaseModel):
-    city: str
-    state: str
+    email: EmailStr = Field(...)
+    webpage: Optional[HttpUrl]
     country: str
 
 @app.get("/")

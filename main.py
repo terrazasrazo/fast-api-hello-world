@@ -27,10 +27,22 @@ class Person(BaseModel):
     hair_color: Optional[HairColor] = Field(default=None)
     is_married: Optional[bool] = Field(default=None)
 
+    class Config:
+        schema_extra = {
+            "example": {
+                "first_name": "Omar",
+                "last_name": "Terrazas",
+                "age": 37,
+                "hair_color": "black",
+                "is_married": True
+            }
+        }
+
 class Location(BaseModel):
-    email: EmailStr = Field(...)
-    webpage: Optional[HttpUrl]
-    country: str
+    email: EmailStr = Field(..., example="terrazas.omar@gmail.com")
+    webpage: Optional[HttpUrl] = Field(example="https://twitter.com/terracing")
+    country: str = Field(..., example="México")
+
 
 @app.get("/")
 def home():

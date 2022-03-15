@@ -1,4 +1,6 @@
 # Python
+from importlib.resources import path
+from re import S
 from typing import Optional
 from enum import Enum
 
@@ -7,7 +9,7 @@ from pydantic import BaseModel, Field
 from pydantic import EmailStr, HttpUrl
 
 # FastAPI
-from fastapi import FastAPI, Body, Path, Query
+from fastapi import FastAPI, Body, Path, Query, status
 
 app = FastAPI()
 
@@ -51,17 +53,17 @@ class Location(BaseModel):
     country: str = Field(..., example="México")
 
 
-@app.get("/")
+@app.get(path="/", status_code=status.HTTP_200_OK)
 def home():
     return {"Hello": "world"}
 
 # Request and Response Body
-@app.post("/person/new", response_model=PersonOut)
+@app.post(path="/person/new", response_model=PersonOut, status_code=status.HTTP_201_CREATED)
 def create_person(person: Person = Body(...)):
     return person
 
 # Validaciones: Query Parameters
-@app.get("/person/detail")
+@app.get(path="/person/detail", status_code=status.HTTP_200_OK)
 def show_person(
     name: Optional[str] = Query(None, min_length=1, max_length=50, example="Omar Terrazas"),
     age: int = Query(...)
@@ -69,14 +71,14 @@ def show_person(
     return {name: age}
 
 # Validaciones: Path Parameters
-@app.get("/person/detail/{person_id}")
+@app.get(path="/person/detail/{person_id}", status_code=status.HTTP_200_OK)
 def show_person(
     person_id: int = Path(..., gt=0, title="Person Id", example=123, description="Identificador to person into database")
 ):
     return {person_id: "It's exists!"}
 
 # Validaciones: Request Body
-@app.put("/person/{person_id}")
+@app.put(path="/person/{person_id}", status_code=status.HTTP_202_ACCEPTED)
 def update_person(
     person_id: int = Path(..., gt=0, title="Person Id", example=123, description="Identificador to person into database"),
     person: Person = Body(...),

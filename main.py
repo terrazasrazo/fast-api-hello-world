@@ -20,13 +20,16 @@ class HairColor(Enum):
     blonde = 'blonde'
     red = 'red'
 
-class Person(BaseModel):
+class PersonBase(BaseModel):
     first_name: str = Field(..., min_length=1, max_length=50)
     last_name: str = Field(..., min_length=1, max_length=50)
     age: int = Field(..., gt=0, le=115)
     hair_color: Optional[HairColor] = Field(default=None)
-    is_married: Optional[bool] = Field(default=None)
+    is_married: Optional[bool] = Field(default=None)  
 
+class Person(PersonBase):
+    password: str = Field(..., min_length=8)
+    """"
     class Config:
         schema_extra = {
             "example": {
@@ -37,6 +40,10 @@ class Person(BaseModel):
                 "is_married": True
             }
         }
+    """
+
+class PersonOut(PersonBase):
+    pass
 
 class Location(BaseModel):
     email: EmailStr = Field(..., example="terrazas.omar@gmail.com")
@@ -49,7 +56,7 @@ def home():
     return {"Hello": "world"}
 
 # Request and Response Body
-@app.post("/person/new")
+@app.post("/person/new", response_model=PersonOut)
 def create_person(person: Person = Body(...)):
     return person
 
